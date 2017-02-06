@@ -16,7 +16,6 @@
  */
 package com.dataflowdeveloper.processors.process;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
 import org.apache.nifi.annotation.behavior.WritesAttribute;
@@ -44,97 +42,83 @@ import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.StreamCallback;
-import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
-   
-@Tags({"extracttextprocessor"})
+
+@Tags({ "extracttextprocessor" })
 @CapabilityDescription("Run Tika Text Extraction from PDF, Word, Excel")
 @SeeAlso({})
-@ReadsAttributes({@ReadsAttribute(attribute="", description="")})
-@WritesAttributes({@WritesAttribute(attribute="", description="")})
+@ReadsAttributes({ @ReadsAttribute(attribute = "", description = "") })
+@WritesAttributes({ @WritesAttribute(attribute = "", description = "") })
 public class ExtractTextProcessor extends AbstractProcessor {
 
 	public static final String ATTRIBUTE_OUTPUT_NAME = "body";
-	    
-    public static final Relationship REL_SUCCESS = new Relationship.Builder()
-            .name("success")
-            .description("Successfully determine sentiment.")
-            .build();
 
-    public static final Relationship REL_FAILURE = new Relationship.Builder()
-            .name("failure")
-            .description("Failed to determine sentiment.")
-            .build();
+	public static final Relationship REL_SUCCESS = new Relationship.Builder().name("success")
+			.description("Successfully determine sentiment.").build();
 
-    
-    private List<PropertyDescriptor> descriptors;
+	public static final Relationship REL_FAILURE = new Relationship.Builder().name("failure")
+			.description("Failed to determine sentiment.").build();
 
-    private Set<Relationship> relationships;
+	private List<PropertyDescriptor> descriptors;
+	private Set<Relationship> relationships;
 
-    private TikaService service;
-    
-    @Override
-    protected void init(final ProcessorInitializationContext context) {
-        final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
-        this.descriptors = Collections.unmodifiableList(descriptors);
+	@Override
+	protected void init(final ProcessorInitializationContext context) {
+		final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+		this.descriptors = Collections.unmodifiableList(descriptors);
 
-        final Set<Relationship> relationships = new HashSet<Relationship>();
-        relationships.add(REL_SUCCESS);
-        relationships.add(REL_FAILURE);
-        this.relationships = Collections.unmodifiableSet(relationships);
-    }
+		final Set<Relationship> relationships = new HashSet<Relationship>();
+		relationships.add(REL_SUCCESS);
+		relationships.add(REL_FAILURE);
+		this.relationships = Collections.unmodifiableSet(relationships);
+	}
 
-    @Override
-    public Set<Relationship> getRelationships() {
-        return this.relationships;
-    }
+	@Override
+	public Set<Relationship> getRelationships() {
+		return this.relationships;
+	}
 
-    @Override
-    public final List<PropertyDescriptor> getSupportedPropertyDescriptors() {
-        return descriptors;
-    }
+	@Override
+	public final List<PropertyDescriptor> getSupportedPropertyDescriptors() {
+		return descriptors;
+	}
 
-    @OnScheduled
-    public void onScheduled(final ProcessContext context) {
-    	return;
-    }
+	@OnScheduled
+	public void onScheduled(final ProcessContext context) {
+		return;
+	}
 
-    @Override
-    public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
-        FlowFile flowFile = session.get();
-        if ( flowFile == null ) {
-        	flowFile = session.create();
-        }               
-		try {			
-				flowFile.getAttributes();
-						
-	            service = new TikaService();   
-	       	
-
+	@Override
+	public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
+		FlowFile flowFile = session.get();
+		if (flowFile == null) {
+			flowFile = session.create();
+		}
+		try {
+			flowFile.getAttributes();
 			flowFile = session.putAttribute(flowFile, "mime.type", "application/json");
-			//flowFile = session.putAttribute(flowFile, ATTRIBUTE_OUTPUT_NAME, value);
-
-            flowFile = session.write(flowFile, new StreamCallback() {
-                @Override
-                public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
-                	Tika tika = new Tika();
-                	 String text = "";
+			flowFile = session.write(flowFile, new StreamCallback() {
+				@Override
+				public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
+					Tika tika = new Tika();
+					String text = "";
 					try {
 						text = tika.parseToString(inputStream);
 					} catch (TikaException e) {
-						getLogger().error("Apache Tika failed to parse input " + e.getLocalizedMessage()) ;
+						getLogger().error("Apache Tika failed to parse input " + e.getLocalizedMessage());
 						e.printStackTrace();
-					}                	 
+					}
+					// TODO: wrap in JSON???
 					outputStream.write(text.getBytes());
-                }
-            });
+				}
+			});
 			session.transfer(flowFile, REL_SUCCESS);
 			session.commit();
-		   } catch (final Throwable t) {
-			   getLogger().error("Unable to process ExtractTextProcessor file " + t.getLocalizedMessage()) ;
-			   getLogger().error("{} failed to process due to {}; rolling back session", new Object[]{this, t});
-	            throw t;
+		} catch (final Throwable t) {
+			getLogger().error("Unable to process ExtractTextProcessor file " + t.getLocalizedMessage());
+			getLogger().error("{} failed to process due to {}; rolling back session", new Object[] { this, t });
+			throw t;
 		}
-    }
+	}
 }

@@ -16,14 +16,18 @@
  */
 package com.dataflowdeveloper.processors.process;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
@@ -42,6 +46,7 @@ import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.StreamCallback;
+import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 
@@ -52,8 +57,16 @@ import org.apache.tika.exception.TikaException;
 @WritesAttributes({ @WritesAttribute(attribute = "", description = "") })
 public class ExtractTextProcessor extends AbstractProcessor {
 
-	public static final String ATTRIBUTE_OUTPUT_NAME = "body";
-
+	public static final PropertyDescriptor MAX_TEXT_LENGTH = new PropertyDescriptor
+            .Builder().name("MAX_TEXT_LENGTH")
+            .displayName("Max Output Text Length")
+            .description("The maximum length of text to retrieve. This is used to limit memory usage for dealing with large files. Specify -1 for unlimited length.")
+            .required(false)
+            .defaultValue("-1")
+            .addValidator(StandardValidators.INTEGER_VALIDATOR)
+            .expressionLanguageSupported(false)
+            .build();
+	
 	public static final Relationship REL_SUCCESS = new Relationship.Builder().name("success")
 			.description("Successfully determine sentiment.").build();
 
@@ -66,6 +79,7 @@ public class ExtractTextProcessor extends AbstractProcessor {
 	@Override
 	protected void init(final ProcessorInitializationContext context) {
 		final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+		descriptors.add(MAX_TEXT_LENGTH);
 		this.descriptors = Collections.unmodifiableList(descriptors);
 
 		final Set<Relationship> relationships = new HashSet<Relationship>();
@@ -95,25 +109,43 @@ public class ExtractTextProcessor extends AbstractProcessor {
 		if (flowFile == null) {
 			flowFile = session.create();
 		}
+		
+		final int maxTextLength = context.getProperty(MAX_TEXT_LENGTH).asInteger();
+		final String filename = flowFile.getAttribute("filename");
+		
 		try {
-			flowFile.getAttributes();
-			flowFile = session.putAttribute(flowFile, "mime.type", "application/json");
-			flowFile = session.write(flowFile, new StreamCallback() {
+			final AtomicReference<String> type = new AtomicReference<>();
+			final AtomicReference<Boolean> wasError = new AtomicReference<>(false);
+			
+			flowFile= session.write(flowFile, new StreamCallback() {
 				@Override
 				public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
+					BufferedInputStream buffStream = new BufferedInputStream(inputStream);
 					Tika tika = new Tika();
 					String text = "";
 					try {
-						text = tika.parseToString(inputStream);
+						type.set(tika.detect(buffStream, filename));
+						tika.setMaxStringLength(maxTextLength);
+						text = tika.parseToString(buffStream);
 					} catch (TikaException e) {
 						getLogger().error("Apache Tika failed to parse input " + e.getLocalizedMessage());
 						e.printStackTrace();
+						wasError.set(true);
+						return;
 					}
-					// TODO: wrap in JSON???
+					
 					outputStream.write(text.getBytes());
+					buffStream.close();
 				}
 			});
-			session.transfer(flowFile, REL_SUCCESS);
+			
+			if (wasError.get()) {
+				session.transfer(flowFile, REL_FAILURE);
+			} else {			
+				Map<String, String> mimeAttrs = new HashMap<String, String>() {{ put("mime.type", "text/plain"); put("orig.mime.type", type.get()); }};
+				flowFile = session.putAllAttributes(flowFile, mimeAttrs);
+				session.transfer(flowFile, REL_SUCCESS);
+			}
 			session.commit();
 		} catch (final Throwable t) {
 			getLogger().error("Unable to process ExtractTextProcessor file " + t.getLocalizedMessage());

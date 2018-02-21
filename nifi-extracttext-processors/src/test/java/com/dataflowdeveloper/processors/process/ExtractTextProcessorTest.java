@@ -16,11 +16,15 @@
  */
 package com.dataflowdeveloper.processors.process;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.processor.util.StandardValidators;
@@ -30,46 +34,237 @@ import org.apache.nifi.util.TestRunners;
 import org.junit.Before;
 import org.junit.Test;
 
+
 public class ExtractTextProcessorTest {
 
 	private TestRunner testRunner;
-
-	public static final String ATTRIBUTE_INPUT_NAME = "sentence";
-	
-    public static final PropertyDescriptor MY_PROPERTY = new PropertyDescriptor
-            .Builder().name(ATTRIBUTE_INPUT_NAME)
-            .description("A sentence to analyze for sentiment, such as a Tweet.")
-            .required(true)
-            .expressionLanguageSupported(true)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
-    
+ 
 	@Before
 	public void init() {
 		testRunner = TestRunners.newTestRunner(ExtractTextProcessor.class);
 	}
 
 	@Test
-	public void testProcessor() {
+	public void processor_should_support_pdf_types_without_exception() {
 		
 		try {
-			testRunner.enqueue(new FileInputStream(new File("src/test/resources/d.pdf")));
+			final String filename = "simple.pdf";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 
-		testRunner.setValidateExpressionUsage(false);
-		testRunner.run();
 		testRunner.assertValid();
+		testRunner.run();
+		testRunner.assertTransferCount(ExtractTextProcessor.REL_FAILURE, 0);
+		
+		
 		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
-
 		for (MockFlowFile mockFile : successFiles) {
 			try {
-				System.out.println("FILE:" + new String(mockFile.toByteArray(), "UTF-8"));
-				
+				String result = new String(mockFile.toByteArray(), "UTF-8");
+				String trimmedResult = result.trim();
+				assertTrue(trimmedResult.startsWith("A Simple PDF File"));
+				System.out.println("FILE:" + result);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	@Test
+	public void processor_should_support_doc_types_without_exception() {
+		
+		try {
+			final String filename = "simple.doc";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		testRunner.assertValid();
+		testRunner.run();
+		testRunner.assertTransferCount(ExtractTextProcessor.REL_FAILURE, 0);
+		
+		
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			try {
+				String result = new String(mockFile.toByteArray(), "UTF-8");
+				String trimmedResult = result.trim();
+				assertTrue(trimmedResult.startsWith("A Simple WORD DOC File"));
+				System.out.println("FILE:" + result);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Test
+	public void processor_should_support_docx_types_without_exception() {
+		
+		try {
+			final String filename = "simple.docx";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		testRunner.assertValid();
+		testRunner.run();
+		testRunner.assertTransferCount(ExtractTextProcessor.REL_FAILURE, 0);
+		
+		
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			try {
+				String result = new String(mockFile.toByteArray(), "UTF-8");
+				String trimmedResult = result.trim();
+				assertTrue(trimmedResult.startsWith("A Simple WORD DOCX File"));
+				System.out.println("FILE:" + result);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Test
+	public void when_running_processor_mime_type_should_be_discovered_for_pdf_input() {
+		
+		try {
+			final String filename = "simple.pdf";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		testRunner.assertValid();
+		testRunner.run();
+		
+		testRunner.assertAllFlowFilesTransferred(ExtractTextProcessor.REL_SUCCESS);
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			mockFile.assertAttributeExists("mime.type");
+			mockFile.assertAttributeEquals("mime.type", "text/plain");
+			mockFile.assertAttributeExists("orig.mime.type");
+			mockFile.assertAttributeEquals("orig.mime.type", "application/pdf");
+		}
+	}
+	
+	@Test
+	public void when_running_processor_mime_type_should_be_discovered_for_doc_input() {
+		
+		try {
+			final String filename = "simple.doc";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		testRunner.assertValid();
+		testRunner.run();
+		
+		testRunner.assertAllFlowFilesTransferred(ExtractTextProcessor.REL_SUCCESS);
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			mockFile.assertAttributeExists("mime.type");
+			mockFile.assertAttributeEquals("mime.type", "text/plain");
+			mockFile.assertAttributeExists("orig.mime.type");
+			mockFile.assertAttributeEquals("orig.mime.type", "application/msword");
+		}
+	}
+	
+	@Test
+	public void when_running_processor_mime_type_should_be_discovered_for_docx_input() {
+		
+		try {
+			final String filename = "simple.docx";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		testRunner.assertValid();
+		testRunner.run();
+		
+		testRunner.assertAllFlowFilesTransferred(ExtractTextProcessor.REL_SUCCESS);
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			mockFile.assertAttributeExists("mime.type");
+			mockFile.assertAttributeEquals("mime.type", "text/plain");
+			mockFile.assertAttributeExists("orig.mime.type");
+			mockFile.assertAttributeEquals("orig.mime.type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		}
+	}
+	
+	@Test
+	public void when_running_processor_as_default_unlimited_text_length_should_be_used() {
+		
+		try {
+			final String filename = "big.pdf";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		testRunner.assertValid();
+		testRunner.run();
+		
+		testRunner.assertAllFlowFilesTransferred(ExtractTextProcessor.REL_SUCCESS);
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			try {
+				String result = new String(mockFile.toByteArray(), "UTF-8");
+				assertTrue(result.length() > 100);
+				System.out.println(Integer.toString(result.length()));
+				System.out.println("FILE:" + result);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Test
+	public void when_running_processor_with_limit_text_length_should_be_less_than_or_equal_to_limit() {
+		
+		try {
+			final String filename = "simple.pdf";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename); }};
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		testRunner.setProperty(ExtractTextProcessor.MAX_TEXT_LENGTH, "100");
+		testRunner.assertValid();
+		testRunner.run();
+		
+		testRunner.assertAllFlowFilesTransferred(ExtractTextProcessor.REL_SUCCESS);
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			try {
+				String result = new String(mockFile.toByteArray(), "UTF-8");
+				assertFalse(result.length() > 100);
+				System.out.println("FILE:" + result);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }

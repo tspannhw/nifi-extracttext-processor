@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="3.743" tests="8" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="3.708" tests="9" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
-    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib"/>
-    <property name="java.vm.version" value="25.111-b14"/>
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib"/>
+    <property name="java.vm.version" value="25.121-b13"/>
     <property name="gopherProxySet" value="false"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="maven.multiModuleProjectDirectory" value="/Volumes/seagate/projects/nifi-extracttext-processor"/>
     <property name="java.vendor.url" value="http://java.oracle.com/"/>
     <property name="path.separator" value=":"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
@@ -15,58 +16,55 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="/Users/willy.demis/Documents/workspace/Nifi/nifi-extracttext-processor"/>
-    <property name="java.runtime.version" value="1.8.0_111-b14"/>
+    <property name="user.dir" value="/Volumes/seagate/projects/nifi-extracttext-processor"/>
+    <property name="java.runtime.version" value="1.8.0_121-b13"/>
     <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
-    <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/endorsed"/>
+    <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/endorsed"/>
     <property name="os.arch" value="x86_64"/>
-    <property name="java.io.tmpdir" value="/var/folders/_k/9pzpsr7s4f1206kvfg_3wllc0000gp/T/"/>
+    <property name="java.io.tmpdir" value="/var/folders/_8/qvtbwhs93r92dj6n1438fzwc0000gn/T/"/>
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/willy.demis/maven/current/bin/m2.conf"/>
+    <property name="classworlds.conf" value="/Users/tspann/.sdkman/candidates/maven/current/bin/m2.conf"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.library.path" value="/Users/willy.demis/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.library.path" value="/Users/tspann/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="os.version" value="10.13.3"/>
-    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
-    <property name="user.home" value="/Users/willy.demis"/>
-    <property name="user.timezone" value="America/Indiana/Indianapolis"/>
+    <property name="user.home" value="/Users/tspann"/>
+    <property name="user.timezone" value="America/New_York"/>
     <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
     <property name="java.specification.version" value="1.8"/>
     <property name="file.encoding" value="UTF-8"/>
-    <property name="user.name" value="willy.demis"/>
-    <property name="java.class.path" value="/Users/willy.demis/maven/current/boot/plexus-classworlds-2.5.1.jar"/>
-    <property name="org.slf4j.simpleLogger.defaultLogLevel" value="info"/>
+    <property name="user.name" value="tspann"/>
+    <property name="java.class.path" value="/Users/tspann/.sdkman/candidates/maven/current/boot/plexus-classworlds-2.5.2.jar"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean package"/>
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher install"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
     <property name="java.vm.info" value="mixed mode"/>
-    <property name="java.version" value="1.8.0_111"/>
-    <property name="java.ext.dirs" value="/Users/willy.demis/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
-    <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/classes"/>
+    <property name="java.version" value="1.8.0_121"/>
+    <property name="java.ext.dirs" value="/Users/tspann/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
+    <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/jre/classes"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="maven.home" value="/Users/willy.demis/maven/current"/>
+    <property name="maven.home" value="/Users/tspann/.sdkman/candidates/maven/current"/>
     <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
-    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
-    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="processor_should_support_doc_types_without_exception" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="1.283"/>
-  <testcase name="processor_should_support_pdf_types_without_exception" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.864"/>
-  <testcase name="when_running_processor_with_limit_text_length_should_be_less_than_or_equal_to_limit" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.047"/>
-  <testcase name="when_running_processor_mime_type_should_be_discovered_for_docx_input" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.742"/>
-  <testcase name="when_running_processor_mime_type_should_be_discovered_for_doc_input" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.028"/>
-  <testcase name="when_running_processor_as_default_unlimited_text_length_should_be_used" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.602"/>
-  <testcase name="when_running_processor_mime_type_should_be_discovered_for_pdf_input" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.04"/>
-  <testcase name="processor_should_support_docx_types_without_exception" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.075"/>
+  <testcase name="processor_should_support_doc_types_without_exception" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.891"/>
+  <testcase name="processor_should_support_pdf_types_without_exception" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.656"/>
+  <testcase name="when_running_processor_with_limit_text_length_should_be_less_than_or_equal_to_limit" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.157"/>
+  <testcase name="when_running_processor_mime_type_should_be_discovered_for_docx_input" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.675"/>
+  <testcase name="when_running_processor_mime_type_should_be_discovered_for_doc_input" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.15"/>
+  <testcase name="when_running_processor_mime_type_should_be_discovered_for_pdf_input_html" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.286"/>
+  <testcase name="when_running_processor_as_default_unlimited_text_length_should_be_used" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.548"/>
+  <testcase name="when_running_processor_mime_type_should_be_discovered_for_pdf_input" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.14"/>
+  <testcase name="processor_should_support_docx_types_without_exception" classname="com.dataflowdeveloper.processors.process.ExtractTextProcessorTest" time="0.16"/>
 </testsuite>

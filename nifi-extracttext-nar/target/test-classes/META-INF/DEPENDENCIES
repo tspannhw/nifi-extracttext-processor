@@ -65,7 +65,7 @@ From: 'an unknown organization'
     License: Public Domain 
 
 From: 'Apache NiFi Project' (http://nifi.apache.org/)
-  - nifi-extracttext-processors (http://nifi.apache.org/nifi-nar-bundles/extracttext-processor/nifi-extracttext-processors) com.dataflowdeveloper:nifi-extracttext-processors:jar:1.0
+  - nifi-extracttext-processors (http://nifi.apache.org/nifi-nar-bundles/extracttext-processor/nifi-extracttext-processors) com.dataflowdeveloper:nifi-extracttext-processors:jar:1.5
     License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
   - nifi-utils (http://nifi.apache.org/nifi-commons/nifi-utils) org.apache.nifi:nifi-utils:jar:1.5.0
     License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0)

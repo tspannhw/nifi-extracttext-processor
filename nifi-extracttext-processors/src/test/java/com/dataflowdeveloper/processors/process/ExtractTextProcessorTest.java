@@ -160,6 +160,39 @@ public class ExtractTextProcessorTest {
 	}
 	
 	@Test
+	public void when_running_processor_mime_type_should_be_discovered_for_pdf_input_html() {
+		
+		try {
+			final String filename = "simple.pdf";
+			MockFlowFile flowFile = testRunner.enqueue(new FileInputStream(new File("src/test/resources/" + filename)));
+			Map<String, String> attrs = new HashMap<String, String>() {{ put("filename", filename);  }};
+
+			testRunner.setProperty(ExtractTextProcessor.FIELD_HTML_OUTPUT, ExtractTextProcessor.HTML_FORMAT);
+
+			flowFile.putAttributes(attrs);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		testRunner.assertValid();
+		testRunner.run();
+		
+		testRunner.assertAllFlowFilesTransferred(ExtractTextProcessor.REL_SUCCESS);
+		List<MockFlowFile> successFiles = testRunner.getFlowFilesForRelationship(ExtractTextProcessor.REL_SUCCESS);
+		for (MockFlowFile mockFile : successFiles) {
+			
+//			 for ( String attribute : mockFile.getAttributes().keySet() ) {
+//				 System.out.println("Attribute:" + attribute + "=" + mockFile.getAttribute(attribute));
+//			 }
+			 			
+			mockFile.assertAttributeExists("mime.type");
+			mockFile.assertAttributeEquals("mime.type", "text/html");
+			mockFile.assertAttributeExists("orig.mime.type");
+			mockFile.assertAttributeEquals("orig.mime.type", "application/pdf");
+		}
+	}
+	
+	@Test
 	public void when_running_processor_mime_type_should_be_discovered_for_doc_input() {
 		
 		try {

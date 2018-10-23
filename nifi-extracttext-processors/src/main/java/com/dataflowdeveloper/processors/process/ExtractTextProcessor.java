@@ -148,6 +148,7 @@ public class ExtractTextProcessor extends AbstractProcessor {
 			flowFile = session.write(flowFile, new StreamCallback() {
 				@Override
 				public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
+					if (inputStream != null ) { 
 					BufferedInputStream buffStream = new BufferedInputStream(inputStream);
 					Tika tika = new Tika();
 					String text = "";
@@ -177,7 +178,6 @@ public class ExtractTextProcessor extends AbstractProcessor {
 					} catch (TikaException e) {
 						getLogger().error("Apache Tika failed to parse input " + e.getLocalizedMessage());
 						wasError.set(true);
-						return;
 					} catch (SAXException e) {
 						getLogger().error(
 								"Apache Tika failed to parse input on XML/HTML error " + e.getLocalizedMessage());
@@ -190,6 +190,11 @@ public class ExtractTextProcessor extends AbstractProcessor {
 
 					outputStream.write(text.getBytes());
 					buffStream.close();
+				     }
+			             else {
+					getLogger().error("Input file was null");
+					wasError.set(true);	
+				     }
 				}
 			});
 
@@ -222,6 +227,8 @@ public class ExtractTextProcessor extends AbstractProcessor {
 		} catch (final Throwable t) {
 			getLogger().error("Unable to process ExtractTextProcessor file " + t.getLocalizedMessage());
 			getLogger().error("{} failed to process due to {}; rolling back session", new Object[] { this, t });
+			// not sure about this one
+			session.transfer(flowFile, REL_FAILURE);
 			throw t;
 		}
 	}
